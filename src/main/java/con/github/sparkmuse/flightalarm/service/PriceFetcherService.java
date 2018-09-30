@@ -35,7 +35,7 @@ public class PriceFetcherService {
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
-        driver = new ChromeDriver(options);
+        driver = new ChromeDriver();
 
         driver.get(fetcherConfig.getUrl());
 
@@ -70,6 +70,7 @@ public class PriceFetcherService {
     private Boolean ifFinished() {
 
         if(hasCaptcha()) {
+            log.info("captcha is activated");
             return false;
         }
 
