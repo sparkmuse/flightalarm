@@ -1,7 +1,0 @@
-
-
-
-app:
-  fetcher:
-    time-out: 10000
-    url: 'https://www.momondo.de/flight-search/BER-MIA/2018-12-21/2019-01-02?sort=price_a'
