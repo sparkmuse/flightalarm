@@ -35,7 +35,7 @@ public class PriceFetcherService {
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
-        driver = new ChromeDriver();
+        driver = new ChromeDriver(options);
 
         driver.get(fetcherConfig.getUrl());
 
@@ -46,6 +46,7 @@ public class PriceFetcherService {
                     .stream()
                     .map(WebElement::getText)
                     .map(this::removeEuro)
+                    .map(this::fixDecimals)
                     .map(Double::new)
                     .min(Comparator.comparingDouble(s -> s));
 
@@ -63,6 +64,9 @@ public class PriceFetcherService {
         driver.quit();
     }
 
+    private String fixDecimals(String original) {
+        return original.replace(".", "").replace(",", "");
+    }
     private String removeEuro(String original) {
         return original.replace(" EUR", "");
     }

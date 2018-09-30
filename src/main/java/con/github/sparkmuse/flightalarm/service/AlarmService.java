@@ -18,7 +18,7 @@ public class AlarmService {
     private final PriceFetcherService fetcherService;
     private final PriceRepository repository;
 
-    @Scheduled(cron = "0 * * ? * *")
+    @Scheduled(cron = "0 0 */2 ? * *")
     public void check() {
 
         Optional<Double> minPrice = fetcherService.getPrices();
