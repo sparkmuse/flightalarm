@@ -1,6 +1,5 @@
 package con.github.sparkmuse.flightalarm.service;
 
-import con.github.sparkmuse.flightalarm.config.ChromeDriverConfig;
 import con.github.sparkmuse.flightalarm.config.FetcherConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +15,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = {PriceFetcherService.class, FetcherConfig.class, ChromeDriverConfig.class},
+        classes = {PriceFetcherService.class, FetcherConfig.class},
         properties = {
                 "app.fetcher.url=file:///Users/alfredo/github/flightalarm/src/test/resources/unfinishedSearch.html"
         }
@@ -25,9 +24,6 @@ public class PriceFetcherServiceTimeoutIT {
 
     @Autowired
     private PriceFetcherService service;
-
-    @Autowired
-    private ChromeDriver driver;
 
     @Test
     public void canGetValue() {

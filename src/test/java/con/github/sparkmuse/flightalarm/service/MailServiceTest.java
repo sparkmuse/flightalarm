@@ -31,7 +31,7 @@ public class MailServiceTest {
 
         Price price = new Price(Price.ID, 300.0d, 200.0d);
         mailService.sendMessage("alfredo.lopez002@gmail.com", price);
-        
+
         verify(mailSender).send(any(MimeMessage.class));
     }
 }

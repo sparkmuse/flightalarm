@@ -1,17 +1,17 @@
 package con.github.sparkmuse.flightalarm.service;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import con.github.sparkmuse.flightalarm.config.FetcherConfig;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -26,28 +26,41 @@ public class PriceFetcherService {
     private static final String CAPTCHA_CSS_SELECTOR = "div[id='bd']";
 
     @Autowired
-    private final ChromeDriver driver;
-
-    @Autowired
     private final FetcherConfig fetcherConfig;
 
+    private ChromeDriver driver;
+
     public Optional<Double> getPrices() {
+
+        WebDriverManager.chromedriver().setup();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
+        driver = new ChromeDriver(options);
 
         driver.get(fetcherConfig.getUrl());
 
         if (ifFinished()) {
             List<WebElement> elements = driver.findElements(By.cssSelector(PRICE_CSS_SELECTOR));
 
-            return elements
+            Optional<Double> minimum = elements
                     .stream()
                     .map(WebElement::getText)
                     .map(this::removeEuro)
                     .map(Double::new)
                     .min(Comparator.comparingDouble(s -> s));
 
+            closeDriver();
+
+            return minimum;
         }
 
+        closeDriver();
         return Optional.empty();
+    }
+
+    private void closeDriver() {
+        driver.close();
+        driver.quit();
     }
 
     private String removeEuro(String original) {
