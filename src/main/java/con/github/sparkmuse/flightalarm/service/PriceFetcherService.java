@@ -1,6 +1,8 @@
 package con.github.sparkmuse.flightalarm.service;
 
+import con.github.sparkmuse.flightalarm.ChromeDriverHelper;
 import con.github.sparkmuse.flightalarm.config.FetcherConfig;
+import con.github.sparkmuse.flightalarm.entity.Proxy;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,17 +27,20 @@ public class PriceFetcherService {
     private static final String PRICE_CSS_SELECTOR = "span[class='price option-text']";
     private static final String CAPTCHA_CSS_SELECTOR = "div[id='bd']";
 
-    @Autowired
     private final FetcherConfig fetcherConfig;
+    private final ProxyService proxyService;
 
     private ChromeDriver driver;
 
     public Optional<Double> getPrices() {
 
-        WebDriverManager.chromedriver().setup();
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
-        driver = new ChromeDriver(options);
+        Optional<Proxy> proxyServer = proxyService.getAGoodAddress();
+
+        if (proxyServer.isPresent()) {
+            driver = ChromeDriverHelper.getDriver(proxyServer.get());
+        } else {
+            driver = ChromeDriverHelper.getDriver();
+        }
 
         driver.get(fetcherConfig.getUrl());
 
@@ -67,20 +72,21 @@ public class PriceFetcherService {
     private String fixDecimals(String original) {
         return original.replace(".", "").replace(",", "");
     }
+
     private String removeEuro(String original) {
         return original.replace(" EUR", "");
     }
 
     private Boolean ifFinished() {
 
-        if(hasCaptcha()) {
+        if (hasCaptcha()) {
             log.info("captcha is activated");
             return false;
         }
 
         long startTime = System.currentTimeMillis();
         WebElement element = null;
-        while (element == null && (System.currentTimeMillis()-startTime)< fetcherConfig.getTimeOut()) {
+        while (element == null && (System.currentTimeMillis() - startTime) < fetcherConfig.getTimeOut()) {
             try {
                 element = driver.findElementByCssSelector(FINISHED_CSS_SELECTOR);
             } catch (NoSuchElementException ex) {
