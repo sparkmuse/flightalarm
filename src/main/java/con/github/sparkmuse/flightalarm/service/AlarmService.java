@@ -1,5 +1,6 @@
 package con.github.sparkmuse.flightalarm.service;
 
+import con.github.sparkmuse.flightalarm.config.AlarmConfig;
 import con.github.sparkmuse.flightalarm.entity.Price;
 import con.github.sparkmuse.flightalarm.repository.PriceRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,24 +18,22 @@ public class AlarmService {
     private final MailService mailService;
     private final PriceFetcherService fetcherService;
     private final PriceRepository repository;
+    private final AlarmConfig alarmConfig;
 
     @Scheduled(cron = "0 */30 * ? * *")
     public void check() {
 
         Optional<Double> minPrice = fetcherService.getPrices();
 
-        if(minPrice.isPresent()) {
+        if (minPrice.isPresent()) {
 
-            Optional<Price> foundPrice = repository.findById(Price.ID);
-
-            if (foundPrice.isPresent()) {
-                if (minPrice.get() < foundPrice.get().getNewPrice()) {
-                    Price newPrice = repository.updatePrice(minPrice.get());
-                    mailService.sendMessage("alfredo.lopez002@gmail.com", newPrice);
-                } else {
-                    log.info("oldPrice = {}  and newPrice = {}", foundPrice.get().getNewPrice(), minPrice.get());
-                }
+            if (minPrice.get() < alarmConfig.getBudget()) {
+                Price newPrice = repository.updatePrice(minPrice.get());
+                mailService.sendMessage(alarmConfig.getEmail(), newPrice);
+            } else {
+                log.info("budget = {} and newPrice = {}", alarmConfig.getBudget(), minPrice.get());
             }
+
         }
     }
 }
