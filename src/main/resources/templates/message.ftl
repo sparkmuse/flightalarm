@@ -5,9 +5,9 @@
 <img src="cid:${id}"/>
 <h1>New price alert</h1>
 <div>
-    <span><font size ="7">${price.newPrice} EUR</font></span>
-    <span>.....</span>
-    <span><strike><font size ="4" color="red">${price.priorPrice} EUR</font></strike></span>
+    <span><font size ="7">${price} EUR</font></span>
+    <span>.....from budget: </span>
+    <span><font size ="4" color="red">${budget} EUR</font></span>
 </div>
 </body>
 </html>

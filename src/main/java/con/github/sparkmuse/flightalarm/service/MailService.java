@@ -1,6 +1,5 @@
 package con.github.sparkmuse.flightalarm.service;
 
-import con.github.sparkmuse.flightalarm.entity.Price;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +27,14 @@ public class MailService {
     private final JavaMailSender mailSender;
     private final Configuration freeMarkerConfig;
 
-    public void sendMessage(String to, Price price) {
+    public void sendMessage(String to, Double price, Double budget) {
 
         try {
             String id = UUID.randomUUID().toString();
 
             Map<String, Object> model = new HashMap<>();
             model.put("price", price);
+            model.put("budget", budget);
             model.put("id", id);
 
             MimeMessage mimeMessage = mailSender.createMimeMessage();

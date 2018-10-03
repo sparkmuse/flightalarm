@@ -3,12 +3,28 @@ app:
     time-out: 300000
     url: https://www.momondo.de/flight-search/BER-MIA/2018-12-21/2019-01-02?sort=price_a
   alarm:
-    email: alfredo.lopez002@gmail.com
+    email: ENC(TuACU8CHoPC0GJ8i6weNzr2jfIGzd8v74ajumTVzoel0hTwXxxX/Eg==)
     budget: 800.00
+    cron: '0 */30 * ? * *'
 
 jasypt:
   encryptor:
     password: ${ENCRYPT_KEY}
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    username: ENC(oNeoma9GnT1emYgg5fQGM1u++e0EDL9zsfAWy2nzlWMmwo4UXeqHlw==)
+    password: ENC(jDvLGAEW5NKqP0gcNeYdi+YRusvNtsjSyhK0/Mbf05k=)
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        transport:
+          protocol: smtp
 
 logging:
   level:
@@ -25,23 +41,3 @@ logging:
           web:
             servlet: ERROR
         web: ERROR
-
-spring:
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/flightalarm
-
-  mail:
-    host: smtp.gmail.com
-    username: ENC(oNeoma9GnT1emYgg5fQGM1u++e0EDL9zsfAWy2nzlWMmwo4UXeqHlw==)
-    password: ENC(jDvLGAEW5NKqP0gcNeYdi+YRusvNtsjSyhK0/Mbf05k=)
-    port: 587
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-        transport:
-          protocol: smtp
-

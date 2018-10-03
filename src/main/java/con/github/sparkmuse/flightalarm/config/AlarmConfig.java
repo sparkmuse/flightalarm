@@ -12,4 +12,5 @@ import org.springframework.context.annotation.Configuration;
 public class AlarmConfig {
     private String email;
     private Double budget;
+    private String cron;
 }

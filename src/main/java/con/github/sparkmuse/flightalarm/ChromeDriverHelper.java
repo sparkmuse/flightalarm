@@ -15,11 +15,14 @@ public class ChromeDriverHelper {
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--proxy-server=" + fullHostAddress);
+        options.addArguments("--incognito", "--window-size=1920,1080");
         return  new ChromeDriver(options);
     }
 
     public static ChromeDriver getDriver() {
         WebDriverManager.chromedriver().setup();
-        return new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--incognito", "--window-size=1920,1080");
+        return new ChromeDriver(options);
     }
 }

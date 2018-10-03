@@ -1,6 +1,5 @@
 package con.github.sparkmuse.flightalarm.service;
 
-import con.github.sparkmuse.flightalarm.entity.Price;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.mail.internet.MimeMessage;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -29,8 +26,7 @@ public class MailServiceTest {
     @Test
     public void send() {
 
-        Price price = new Price(Price.ID, 300.0d, 200.0d);
-        mailService.sendMessage("alfredo.lopez002@gmail.com", price);
+        mailService.sendMessage("myemail@gmail.com",  200.0d, 300.0d);
 
         verify(mailSender).send(any(MimeMessage.class));
     }
