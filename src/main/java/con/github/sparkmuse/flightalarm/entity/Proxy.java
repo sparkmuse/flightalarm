@@ -14,4 +14,9 @@ public class Proxy {
     public String getAddress() {
         return this.host + ":" + this.port;
     }
+
+    public static int compareSpeed(Proxy proxy1, Proxy proxy2) {
+        return proxy1.speed.compareTo(proxy2.speed);
+    }
+
 }

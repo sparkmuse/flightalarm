@@ -6,6 +6,12 @@ app:
     email: ENC(TuACU8CHoPC0GJ8i6weNzr2jfIGzd8v74ajumTVzoel0hTwXxxX/Eg==)
     budget: 800.00
     cron: '0 */30 * ? * *'
+  proxy:
+    proxy-url: https://www.proxynova.com/proxy-server-list/country-de/
+    row-css: data-proxy-id
+    exlusion-proxy-type: Transparent
+    valid-server-test-url: https://www.otto.de/
+    valid-server-search-css: div[id='searchAndIconWrp']
 
 jasypt:
   encryptor:
