@@ -35,7 +35,7 @@ public class PriceFetcherService {
     public Optional<Double> getPrices() {
 
         Optional<Proxy> proxyServer = proxyService.getAGoodAddress();
-
+        
         if (proxyServer.isPresent()) {
             driver = ChromeDriverHelper.getDriver(proxyServer.get());
         } else {

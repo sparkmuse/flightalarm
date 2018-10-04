@@ -4,7 +4,7 @@ app:
     url: https://www.momondo.de/flight-search/BER-MIA/2018-12-21/2019-01-02?sort=price_a
   alarm:
     email: ENC(TuACU8CHoPC0GJ8i6weNzr2jfIGzd8v74ajumTVzoel0hTwXxxX/Eg==)
-    budget: 800.00
+    budget: 900.00
     cron: '0 */30 * ? * *'
   proxy:
     proxy-url: https://www.proxynova.com/proxy-server-list/country-de/

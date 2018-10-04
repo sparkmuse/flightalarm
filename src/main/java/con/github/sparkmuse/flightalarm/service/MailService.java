@@ -62,6 +62,7 @@ public class MailService {
 
             helper.setTo(to);
             helper.setSubject("New price alert");
+            helper.setPriority(1);
             mimeMessage.setContent(content);
 
             mailSender.send(mimeMessage);
