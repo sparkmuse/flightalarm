@@ -17,7 +17,8 @@ import static org.junit.Assert.assertThat;
 @SpringBootTest(
         classes = {PriceFetcherService.class, FetcherConfig.class},
         properties = {
-                "app.fetcher.url=file:///Users/alfredo/github/flightalarm/src/test/resources/unfinishedSearch.html"
+                "app.fetcher.url=file:///Users/alfredo/github/flightalarm/src/test/resources/unfinishedSearch.html",
+                "app.scheduling.enabled=false"
         }
 )
 public class PriceFetcherServiceTimeoutIT {

@@ -18,7 +18,8 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest(
         classes = {PriceFetcherService.class, FetcherConfig.class},
         properties = {
-                "app.fetcher.url=file:///Users/alfredo/github/flightalarm/src/test/resources/finishedSearch.html"
+                "app.fetcher.url=file:///Users/alfredo/github/flightalarm/src/test/resources/finishedSearch.html",
+                "app.scheduling.enabled=false"
         }
 )
 public class PriceFetcherServiceIT {

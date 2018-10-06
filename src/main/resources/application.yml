@@ -12,6 +12,8 @@ app:
     proxy-type: Elite
     valid-server-test-url: https://www.otto.de/
     valid-server-search-css: div[id='searchAndIconWrp']
+  scheduling:
+    enabled: true
 
 jasypt:
   encryptor:
