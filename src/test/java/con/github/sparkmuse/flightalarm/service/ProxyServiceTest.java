@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.*;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ProxyServiceTest {
@@ -17,7 +15,7 @@ public class ProxyServiceTest {
 
     @Test
     public void test() {
-        System.out.println("My Ideal proxy is ....." + proxyService.getAGoodAddress());
+        System.out.println("My Ideal proxy is ....." + proxyService.getProxy());
     }
 
 }

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class ProxyConfig {
     private String proxyUrl;
     private String rowCss;
-    private String exclusionProxyType;
+    private String proxyType;
     private String validServerTestUrl;
     private String validServerSearchCss;
 }

@@ -3,6 +3,8 @@ package con.github.sparkmuse.flightalarm.service;
 import con.github.sparkmuse.flightalarm.ChromeDriverHelper;
 import con.github.sparkmuse.flightalarm.config.ProxyConfig;
 import con.github.sparkmuse.flightalarm.entity.Proxy;
+import con.github.sparkmuse.flightalarm.entity.ProxyResult;
+import con.github.sparkmuse.flightalarm.entity.ProxyResultType;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,9 +24,10 @@ import java.util.Optional;
 public class ProxyService {
 
     private final ProxyConfig config;
+
     private ChromeDriver driver;
 
-    public Optional<Proxy> getAGoodAddress() {
+    public ProxyResult getProxy() {
 
         driver = ChromeDriverHelper.getDriver();
 
@@ -36,7 +39,7 @@ public class ProxyService {
         Optional<Proxy> proxy = rows
                 .stream()
                 .map(this::getProxy)
-                .filter(this::isAceptedType)
+                .filter(this::isElite)
                 .sorted(Comparator.comparingInt(Proxy::getSpeed))
                 .filter(this::isValidServer)
                 .findFirst();
@@ -44,11 +47,20 @@ public class ProxyService {
         driver.close();
         driver.quit();
 
-        return proxy;
+        ProxyResult result = new ProxyResult();
+
+        if (proxy.isPresent()) {
+            result.setProxyResultType(ProxyResultType.OK);
+            result.setProxy(proxy.get());
+        } else {
+            result.setProxyResultType(ProxyResultType.NO_PROXY);
+        }
+
+        return result;
     }
 
-    private boolean isAceptedType(Proxy p) {
-        return !p.getAnonymity().equalsIgnoreCase(config.getExclusionProxyType());
+    private boolean isElite(Proxy p) {
+        return p.getAnonymity().equalsIgnoreCase(config.getProxyType());
     }
 
     private Proxy getProxy(Element element) {
@@ -69,12 +81,14 @@ public class ProxyService {
         try {
             searchBox = driver.findElement(By.cssSelector(config.getValidServerSearchCss()));
         } catch (NoSuchElementException ex) {
-            //does not have captcha
+            //does not have search box
         }
+
+        boolean isValid = (searchBox != null);
 
         driver.close();
         driver.quit();
 
-        return (searchBox != null);
+        return isValid;
     }
 }

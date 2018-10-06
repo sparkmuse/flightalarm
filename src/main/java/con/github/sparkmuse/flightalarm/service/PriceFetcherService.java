@@ -2,16 +2,14 @@ package con.github.sparkmuse.flightalarm.service;
 
 import con.github.sparkmuse.flightalarm.ChromeDriverHelper;
 import con.github.sparkmuse.flightalarm.config.FetcherConfig;
-import con.github.sparkmuse.flightalarm.entity.Proxy;
-import io.github.bonigarcia.wdm.WebDriverManager;
+import con.github.sparkmuse.flightalarm.entity.*;
+import con.github.sparkmuse.flightalarm.repository.PriceResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -29,39 +27,61 @@ public class PriceFetcherService {
 
     private final FetcherConfig fetcherConfig;
     private final ProxyService proxyService;
+    private final PriceResultRepository repository;
 
     private ChromeDriver driver;
 
     public Optional<Double> getPrices() {
 
-        Optional<Proxy> proxyServer = proxyService.getAGoodAddress();
-        
-        if (proxyServer.isPresent()) {
-            driver = ChromeDriverHelper.getDriver(proxyServer.get());
+        PriceResult priceResult = new PriceResult();
+        ProxyResult proxyServerResult = proxyService.getProxy();
+        priceResult.setProxyResult(proxyServerResult);
+
+        if (proxyServerResult.getProxyResultType() == ProxyResultType.OK) {
+            driver = ChromeDriverHelper.getDriver(proxyServerResult.getProxy());
         } else {
             driver = ChromeDriverHelper.getDriver();
         }
 
         driver.get(fetcherConfig.getUrl());
 
-        if (ifFinished()) {
-            List<WebElement> elements = driver.findElements(By.cssSelector(PRICE_CSS_SELECTOR));
-
-            Optional<Double> minimum = elements
-                    .stream()
-                    .map(WebElement::getText)
-                    .map(this::removeEuro)
-                    .map(this::fixDecimals)
-                    .map(Double::new)
-                    .min(Comparator.comparingDouble(s -> s));
-
+        if (hasCaptcha()) {
+            log.info("captcha is activated");
             closeDriver();
 
-            return minimum;
+            priceResult.setResult(PriceResultType.CAPTCHA);
+            repository.save(priceResult);
+
+            return Optional.empty();
         }
 
+        if (!isFinished()) {
+            log.info("browser did not finish loading page.");
+            closeDriver();
+
+            priceResult.setResult(PriceResultType.OTHER);
+            repository.save(priceResult);
+
+            return Optional.empty();
+        }
+
+        List<WebElement> elements = driver.findElements(By.cssSelector(PRICE_CSS_SELECTOR));
+
+        Optional<Double> minimum = elements
+                .stream()
+                .map(WebElement::getText)
+                .map(this::removeEuro)
+                .map(this::fixDecimals)
+                .map(Double::new)
+                .min(Comparator.comparingDouble(s -> s));
+
         closeDriver();
-        return Optional.empty();
+
+        priceResult.setResult(PriceResultType.OK);
+        priceResult.setPrice(minimum.get());
+        repository.save(priceResult);
+
+        return minimum;
     }
 
     private void closeDriver() {
@@ -77,12 +97,7 @@ public class PriceFetcherService {
         return original.replace(" EUR", "");
     }
 
-    private Boolean ifFinished() {
-
-        if (hasCaptcha()) {
-            log.info("captcha is activated");
-            return false;
-        }
+    private Boolean isFinished() {
 
         long startTime = System.currentTimeMillis();
         WebElement element = null;
